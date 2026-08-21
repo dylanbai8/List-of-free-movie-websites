@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      width: 380px;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+      background: #f8f9fa;
+    }
+    h2 {
+      font-size: 18px;
+      color: #1a1a2e;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    h2 span {
+      background: #4a6cf7;
+      color: white;
+      font-size: 12px;
+      padding: 2px 10px;
+      border-radius: 12px;
+    }
+    .info-box {
+      background: #e8f0fe;
+      border-left: 3px solid #4a6cf7;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #1a1a2e;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+    .info-box code {
+      background: #d4e2fc;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-size: 12px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 14px;
+      color: #1a1a2e;
+      margin-bottom: 8px;
+    }
+    textarea {
+      width: 100%;
+      height: 120px;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'Courier New', monospace;
+      resize: vertical;
+      transition: border-color 0.2s;
+      background: white;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: #4a6cf7;
+      box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.1);
+    }
+    textarea::placeholder {
+      color: #aaa;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    }
+    .hint {
+      font-size: 12px;
+      color: #888;
+      margin-top: 6px;
+      line-height: 1.6;
+    }
+    .hint strong {
+      color: #4a6cf7;
+    }
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    button {
+      flex: 1;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-save {
+      background: #4a6cf7;
+      color: white;
+    }
+    .btn-save:hover {
+      background: #3a5cdb;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(74, 108, 247, 0.3);
+    }
+    .btn-save:active {
+      transform: translateY(0);
+    }
+    .btn-clear {
+      background: #f0f0f0;
+      color: #666;
+    }
+    .btn-clear:hover {
+      background: #e0e0e0;
+    }
+    .status {
+      margin-top: 12px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      text-align: center;
+      display: none;
+    }
+    .status.success {
+      display: block;
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .status.error {
+      display: block;
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .current-domain {
+      font-size: 12px;
+      color: #888;
+      margin-top: 10px;
+      padding: 6px 10px;
+      background: #f0f0f0;
+      border-radius: 4px;
+      text-align: center;
+    }
+    .current-domain strong {
+      color: #1a1a2e;
+    }
+    .badge {
+      display: inline-block;
+      background: #4a6cf7;
+      color: white;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-left: 6px;
+    }
+  </style>
+</head>
+<body>
+  <h2>
+    🎯 视频遮罩清除器
+    <span>v2.0</span>
+  </h2>
+
+  <div class="info-box">
+    💡 每行输入一个域名，留空则对所有网站生效<br>
+    例如：<code>youtube.com</code> 会自动匹配 <code>www.youtube.com</code>
+  </div>
+
+  <label for="domains">域名白名单</label>
+  <textarea id="domains" placeholder="例如：&#10;youtube.com&#10;bilibili.com&#10;v.qq.com"></textarea>
+  
+  <div class="hint">
+    📌 支持子域名匹配：<strong>example.com</strong> 匹配 <strong>video.example.com</strong>
+  </div>
+
+  <div class="btn-group">
+    <button class="btn-save" id="saveBtn">💾 保存设置</button>
+    <button class="btn-clear" id="clearBtn">🗑️ 清空白名单</button>
+  </div>
+
+  <div class="status" id="status"></div>
+
+  <div class="current-domain" id="currentDomain">
+    当前页面：<strong id="domainDisplay">加载中...</strong>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

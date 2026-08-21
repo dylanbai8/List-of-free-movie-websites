@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "视频遮罩清除器",
+  "version": "2.0",
+  "description": "自动移除视频网站随机遮罩，支持域名白名单设置",
+  "permissions": ["activeTab", "storage"],
+  "action": {
+    "default_title": "点击清除当前页面遮罩",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ]
+}
