@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>自动全屏视频</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      width: 400px;
+      padding: 16px;
+      font-family: -apple-system, system-ui, sans-serif;
+      margin: 0;
+      background: #ffffff;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+    h3 {
+      margin: 0;
+      color: #1a1a2e;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge {
+      display: inline-block;
+      background: #2196f3;
+      color: white;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+    }
+
+    .status {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 12px;
+      border-left: 4px solid #4caf50;
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+    .status.disabled {
+      border-left-color: #ef5350;
+      background: #fbe9e7;
+      color: #c62828;
+    }
+    .status .domain {
+      font-weight: 600;
+    }
+
+    .info {
+      background: #f5f5f5;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #333;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+    .info code {
+      background: #e2e6ea;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-size: 11px;
+    }
+
+    /* ===== 智能建议区域 ===== */
+    .suggestion-section {
+      background: #e3f2fd;
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      border-left: 4px solid #2196f3;
+    }
+    .suggestion-section .title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1565c0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .suggestion-section .loading {
+      font-size: 12px;
+      color: #555;
+    }
+    .suggestion-section .domain-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin: 6px 0;
+    }
+    .suggestion-section .domain-tag {
+      background: #bbdefb;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      color: #0d47a1;
+      cursor: pointer;
+      border: 1px solid #90caf9;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .suggestion-section .domain-tag:hover {
+      background: #90caf9;
+      border-color: #42a5f5;
+    }
+    .suggestion-section .domain-tag.selected {
+      background: #1a73e8;
+      color: white;
+      border-color: #1a73e8;
+    }
+    .suggestion-section .domain-tag .add-icon {
+      margin-left: 4px;
+      font-size: 11px;
+    }
+    .suggestion-section .hint-text {
+      font-size: 11px;
+      color: #555;
+      margin-top: 4px;
+    }
+    .suggestion-section .btn-add-suggestions {
+      background: #1a73e8;
+      color: white;
+      border: none;
+      padding: 4px 14px;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.2s;
+    }
+    .suggestion-section .btn-add-suggestions:hover {
+      background: #1557b0;
+    }
+    .suggestion-section .btn-add-suggestions:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .suggestion-section .no-suggestion {
+      font-size: 12px;
+      color: #666;
+      padding: 4px 0;
+    }
+
+    .settings-section {
+      border-top: 1px solid #eee;
+      padding-top: 12px;
+      margin-top: 4px;
+    }
+    .settings-section label {
+      display: block;
+      font-weight: 600;
+      font-size: 13px;
+      color: #333;
+      margin-bottom: 4px;
+    }
+    .settings-section .desc {
+      font-size: 12px;
+      color: #777;
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+    .settings-section textarea {
+      width: 100%;
+      height: 80px;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: 'Courier New', monospace;
+      resize: vertical;
+      box-sizing: border-box;
+      background: #fafbfc;
+    }
+    .settings-section textarea:focus {
+      outline: none;
+      border-color: #2196f3;
+      box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+    }
+    .settings-section .hint {
+      font-size: 11px;
+      color: #999;
+      margin-top: 4px;
+    }
+    .settings-section .example {
+      background: #f0f4f8;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #555;
+      margin-top: 4px;
+    }
+    .settings-section .example code {
+      background: #e2e6ea;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-size: 11px;
+    }
+    .settings-section .example .highlight {
+      color: #1565c0;
+      font-weight: 600;
+    }
+
+    .settings-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 6px 18px;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: #2196f3;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #1976d2;
+    }
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .btn-secondary {
+      background: #e0e0e0;
+      color: #333;
+    }
+    .btn-secondary:hover {
+      background: #d0d0d0;
+    }
+
+    .settings-status {
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 4px;
+      margin-top: 8px;
+      display: none;
+    }
+    .settings-status.success {
+      display: block;
+      background: #e8f5e9;
+      color: #2e7d32;
+      border-left: 3px solid #4caf50;
+    }
+    .settings-status.error {
+      display: block;
+      background: #fbe9e7;
+      color: #c62828;
+      border-left: 3px solid #ef5350;
+    }
+
+    .footer {
+      font-size: 11px;
+      color: #888;
+      border-top: 1px solid #eee;
+      padding-top: 10px;
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .reload-hint {
+      color: #f57c00;
+      font-size: 11px;
+      display: none;
+    }
+    .reload-hint.show {
+      display: inline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h3>
+      🎬 自动全屏
+      <span class="badge">v2.3</span>
+    </h3>
+    <span style="font-size:12px; color:#999;">⚡ 即开即用</span>
+  </div>
+
+  <div class="status" id="statusDisplay">
+    ✅ 加载中...
+  </div>
+
+  <!-- ===== 智能建议区域 ===== -->
+  <div class="suggestion-section" id="suggestionSection">
+    <div class="title">💡 白名单智能建议</div>
+    <div id="suggestionContent">
+      <span class="loading">⏳ 正在分析当前页面的视频来源...</span>
+    </div>
+  </div>
+
+  <div class="info">
+    <strong>功能：</strong><br>
+    • 手动点击播放 → 自动全屏<br>
+    • 暂停/结束 → 退出全屏<br>
+    • 支持 Shadow DOM、iframe、跨域视频
+  </div>
+
+  <div class="settings-section">
+    <label for="whitelistInput">📋 白名单域名 (留空时全局生效)</label>
+    <textarea id="whitelistInput" placeholder="例如：&#10;youtube.com&#10;bilibili.com&#10;*.zgtv.online"></textarea>
+    <div class="hint">💡 支持通配符 <code>*.example.com</code> 匹配所有子域名</div>
+
+    <div class="settings-actions">
+      <button class="btn btn-primary" id="saveSettingsBtn">💾 保存设置</button>
+      <button class="btn btn-secondary" id="clearSettingsBtn">清空白名单</button>
+      <span style="font-size:12px; color:#999;" id="domainCount"></span>
+    </div>
+
+    <div class="settings-status" id="settingsStatus"></div>
+    <div class="reload-hint" id="reloadHint">🔄 设置已保存，请刷新当前页面使配置生效</div>
+  </div>
+
+  <div class="footer">
+    <span>💡 打开视频页面自动工作</span>
+    <span id="whitelistStatus" style="font-size:11px; color:#999;"></span>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

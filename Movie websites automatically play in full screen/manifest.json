@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "自动全屏视频",
+  "version": "2.3.0",
+  "description": "检测到视频播放时自动触发浏览器全屏（支持通配符白名单 + 智能建议）",
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_end",
+      "all_frames": true
+    }
+  ],
+  "action": {
+    "default_title": "自动全屏视频",
+    "default_popup": "popup.html"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["popup.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
