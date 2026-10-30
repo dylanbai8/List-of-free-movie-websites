@@ -11,3 +11,8 @@ https://www.olevod.com/
 
 https://www.o8tv.com/
 
+https://h5.jianpianips1.com/#/home
+
+https://kanju.ai/ https://kanju43.com/
+
+
